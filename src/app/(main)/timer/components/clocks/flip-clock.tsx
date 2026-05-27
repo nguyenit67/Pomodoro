@@ -1,7 +1,6 @@
 'use client';
 
-import { memo } from 'react';
-import NumberFlow from '@number-flow/react';
+import { memo, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useAnalogClockState } from './use-analog-clock-state';
 
@@ -13,16 +12,135 @@ export type FlipClockProps = {
 };
 
 const sizeClasses = {
-  small: { digit: 'text-[clamp(2.5rem,7vmin,4.5rem)]', padding: 'p-[clamp(0.75rem,2vmin,1.5rem)]', separator: 'text-[clamp(2.5rem,7vmin,4.5rem)]' },
-  medium: { digit: 'text-[clamp(3.5rem,10vmin,6rem)]', padding: 'p-[clamp(1rem,3vmin,2.5rem)]', separator: 'text-[clamp(3.5rem,10vmin,6rem)]' },
-  large: { digit: 'text-[clamp(4.5rem,13vmin,8rem)]', padding: 'p-[clamp(1.5rem,4vmin,3rem)]', separator: 'text-[clamp(4.5rem,13vmin,8rem)]' },
+  small: { digit: 'text-[clamp(2.5rem,7vmin,4.5rem)]', gap: 'space-x-1', separator: 'text-[clamp(2.5rem,7vmin,4.5rem)]' },
+  medium: { digit: 'text-[clamp(3.5rem,10vmin,6rem)]', gap: 'space-x-2', separator: 'text-[clamp(3.5rem,10vmin,6rem)]' },
+  large: { digit: 'text-[clamp(4.5rem,13vmin,8rem)]', gap: 'space-x-3', separator: 'text-[clamp(4.5rem,13vmin,8rem)]' },
 };
 
-const numberFlowTiming = {
-  transform: { duration: 600, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' as const },
-  spin: { duration: 600, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' as const },
-  opacity: { duration: 350, easing: 'ease-out' as const },
-};
+const FlipDigit = memo(({ value, color }: { value: string; color: string }) => {
+  const [currentVal, setCurrentVal] = useState(value);
+  const [prevVal, setPrevVal] = useState(value);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [flipId, setFlipId] = useState(0);
+
+  if (value !== currentVal) {
+    setPrevVal(currentVal);
+    setCurrentVal(value);
+    setIsFlipping(true);
+    setFlipId((id) => id + 1);
+  }
+
+  useEffect(() => {
+    if (isFlipping) {
+      const timer = setTimeout(() => {
+        setIsFlipping(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isFlipping, flipId]);
+
+  return (
+    <div 
+      className="relative inline-flex flex-col w-[0.82em] h-[1.3em] font-bold select-none text-center" 
+      style={{ perspective: '400px', transformStyle: 'preserve-3d' }}
+    >
+      {/* STATIC TOP HALF (displays current new value) */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-1/2 overflow-hidden bg-neutral-900 dark:bg-black rounded-t-xl border-t border-x border-neutral-800/80 dark:border-zinc-800/60 shadow-sm"
+        style={{ backfaceVisibility: 'hidden' }}
+      >
+        <span 
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{ 
+            color,
+            fontSize: 'inherit',
+            lineHeight: '1.3em',
+            top: '0'
+          }}
+        >
+          {currentVal}
+        </span>
+      </div>
+
+      {/* STATIC BOTTOM HALF (displays new value normally, old value only during active flip) */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-1/2 overflow-hidden bg-neutral-900 dark:bg-black rounded-b-xl border-b border-x border-neutral-800/80 dark:border-zinc-800/60 shadow-sm"
+        style={{ backfaceVisibility: 'hidden' }}
+      >
+        <span 
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{ 
+            color,
+            fontSize: 'inherit',
+            lineHeight: '1.3em',
+            bottom: '0'
+          }}
+        >
+          {isFlipping ? prevVal : currentVal}
+        </span>
+      </div>
+
+      {/* FLIPPING TOP PANEL (rotates 0deg to -90deg, displays previous old value) */}
+      {isFlipping && (
+        <div 
+          key={`top-${flipId}`}
+          className="absolute top-0 left-0 right-0 h-1/2 overflow-hidden bg-neutral-900 dark:bg-black rounded-t-xl border-t border-x border-neutral-800/80 dark:border-zinc-800/60 flip-panel-top-anim"
+          style={{ 
+            transformOrigin: 'bottom',
+            backfaceVisibility: 'hidden',
+          }}
+        >
+          <span 
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{ 
+              color,
+              fontSize: 'inherit',
+              lineHeight: '1.3em',
+              top: '0'
+            }}
+          >
+            {prevVal}
+          </span>
+          {/* Shadow Overlay */}
+          <div className="absolute inset-0 bg-black/25 flip-shadow-top-anim pointer-events-none" />
+        </div>
+      )}
+
+      {/* FLIPPING BOTTOM PANEL (rotates 90deg to 0deg, displays current new value) */}
+      {isFlipping && (
+        <div 
+          key={`bottom-${flipId}`}
+          className="absolute bottom-0 left-0 right-0 h-1/2 overflow-hidden bg-neutral-900 dark:bg-black rounded-b-xl border-b border-x border-neutral-800/80 dark:border-zinc-800/60 flip-panel-bottom-anim"
+          style={{ 
+            transformOrigin: 'top',
+            backfaceVisibility: 'hidden',
+            transform: 'rotateX(90deg)',
+          }}
+        >
+          <span 
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{ 
+              color,
+              fontSize: 'inherit',
+              lineHeight: '1.3em',
+              bottom: '0'
+            }}
+          >
+            {currentVal}
+          </span>
+          {/* Shadow Overlay */}
+          <div className="absolute inset-0 bg-black/25 flip-shadow-bottom-anim pointer-events-none" />
+        </div>
+      )}
+
+      {/* Center divide line */}
+      <div 
+        className="absolute top-1/2 left-0 right-0 h-[1.5px] z-10 bg-black/40 border-t border-white/5"
+      />
+    </div>
+  );
+});
+FlipDigit.displayName = 'FlipDigit';
 
 export const FlipClock = memo(
   ({ timeLeft, isRunning, clockSize = 'medium' }: FlipClockProps) => {
@@ -32,53 +150,71 @@ export const FlipClock = memo(
     const size = sizeClasses[clockSize];
     const isUrgentOrCritical = animConfig.state === 'urgent' || animConfig.state === 'critical';
 
+    const minsDigits = String(mins).padStart(2, '0').split('');
+    const secsDigits = String(secs).padStart(2, '0').split('');
+
     return (
       <div className="text-center">
+        {/* Style block for animations */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes flip-top {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(-90deg); }
+          }
+          @keyframes flip-bottom {
+            0% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+          }
+          @keyframes flip-shadow-top {
+            0% { opacity: 0; }
+            100% { opacity: 0.55; }
+          }
+          @keyframes flip-shadow-bottom {
+            0% { opacity: 0.55; }
+            100% { opacity: 0; }
+          }
+          .flip-panel-top-anim {
+            animation: flip-top 250ms ease-in forwards;
+          }
+          .flip-panel-bottom-anim {
+            animation: flip-bottom 250ms ease-out 250ms both;
+          }
+          .flip-shadow-top-anim {
+            animation: flip-shadow-top 250ms ease-in forwards;
+          }
+          .flip-shadow-bottom-anim {
+            animation: flip-shadow-bottom 250ms ease-out 250ms both;
+          }
+        ` }} />
+
         <div
           className={cn(
-            'flex justify-center items-center space-x-2 clock-color-transition',
+            'flex justify-center items-center clock-color-transition',
+            size.gap,
+            size.digit,
             isUrgentOrCritical && 'animate-clock-pulse',
           )}
-          style={{ color: animConfig.color }}
         >
-          <div
-            className={cn('bg-white/10 backdrop-blur-sm border-2 rounded-lg clock-color-transition', size.padding)}
-            style={{
-              borderColor: animConfig.color,
-              transform: 'perspective(1000px) rotateX(0deg)',
-            }}
-          >
-            <div className={cn(size.digit, 'font-bold tabular-nums')}>
-              <NumberFlow
-                value={mins}
-                format={{ minimumIntegerDigits: 2 }}
-                animated
-                willChange
-                transformTiming={numberFlowTiming.transform}
-                spinTiming={numberFlowTiming.spin}
-                opacityTiming={numberFlowTiming.opacity}
-              />
-            </div>
+          {/* Minutes Digits */}
+          <div className="flex space-x-1 md:space-x-1.5">
+            {minsDigits.map((digit, idx) => (
+              <FlipDigit key={`min-${idx}`} value={digit} color={animConfig.color} />
+            ))}
           </div>
-          <div className={cn(size.separator, 'font-bold tabular-nums')}>:</div>
-          <div
-            className={cn('bg-white/10 backdrop-blur-sm border-2 rounded-lg clock-color-transition', size.padding)}
-            style={{
-              borderColor: animConfig.color,
-              transform: 'perspective(1000px) rotateX(0deg)',
-            }}
+
+          {/* Separator */}
+          <div 
+            className={cn(size.separator, 'font-bold flex items-center justify-center h-[1.3em] select-none')}
+            style={{ color: animConfig.color }}
           >
-            <div className={cn(size.digit, 'font-bold tabular-nums')}>
-              <NumberFlow
-                value={secs}
-                format={{ minimumIntegerDigits: 2 }}
-                animated
-                willChange
-                transformTiming={numberFlowTiming.transform}
-                spinTiming={numberFlowTiming.spin}
-                opacityTiming={numberFlowTiming.opacity}
-              />
-            </div>
+            :
+          </div>
+
+          {/* Seconds Digits */}
+          <div className="flex space-x-1 md:space-x-1.5">
+            {secsDigits.map((digit, idx) => (
+              <FlipDigit key={`sec-${idx}`} value={digit} color={animConfig.color} />
+            ))}
           </div>
         </div>
       </div>

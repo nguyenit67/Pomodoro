@@ -89,7 +89,7 @@ export default function LandingPage() {
         <HeroSSR />
         <FeaturesSSR />
         <HowItWorks />
-        <AIChatIndicator />
+        {/* <AIChatIndicator /> */}
         <Pricing />
         <FAQ />
         <CTA />

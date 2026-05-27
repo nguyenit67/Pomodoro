@@ -29,6 +29,10 @@ interface SystemState {
   // Chat panel state
   isChatPanelOpen: boolean
   setChatPanelOpen: (isOpen: boolean) => void
+
+  // Timer settings modal state
+  isTimerSettingsOpen: boolean
+  setTimerSettingsOpen: (isOpen: boolean) => void
 }
 
 const defaultBackgroundSettings: BackgroundSettings = {
@@ -46,6 +50,7 @@ export const useSystemStore = create<SystemState>()(
       isLoading: false,
       isFocusMode: false,
       isChatPanelOpen: false,
+      isTimerSettingsOpen: false,
 
       updateBackgroundSettings: (newSettings) =>
         set((state) => ({
@@ -69,6 +74,9 @@ export const useSystemStore = create<SystemState>()(
 
       setChatPanelOpen: (isOpen) =>
         set({ isChatPanelOpen: isOpen }),
+        
+      setTimerSettingsOpen: (isOpen) =>
+        set({ isTimerSettingsOpen: isOpen }),
     }),
     {
       name: 'system-storage',

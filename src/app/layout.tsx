@@ -8,6 +8,7 @@ import { Be_Vietnam_Pro, Space_Grotesk, Nunito } from 'next/font/google';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
 import { AuthCodeHandler } from '@/components/auth/auth-code-handler';
+import { LocatorSetup } from '@/components/dev/locator-setup';
 import './globals.css';
 
 const beVietnamPro = Be_Vietnam_Pro({
@@ -132,6 +133,7 @@ export default function RootLayout({
         ) : null}
         <AuthCodeHandler />
         {children}
+        <LocatorSetup />
         <Analytics />
       </body>
     </html>

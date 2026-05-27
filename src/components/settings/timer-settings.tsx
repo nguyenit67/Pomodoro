@@ -11,6 +11,7 @@ import { useTimerStore } from '@/stores/timer-store'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
 import { useI18n } from '@/contexts/i18n-context'
+import { FlipClock } from '@/app/(main)/timer/components/clocks/flip-clock'
 
 type ClockType = 'digital' | 'analog' | 'progress' | 'flip' | 'animated'
 
@@ -435,35 +436,15 @@ export function TimerSettings({ onClose }: { onClose?: () => void }) {
                                     );
                                 })()}
                                 {localSettings.clockType === 'flip' && (() => {
-                                    const sizeClasses = {
-                                        small: { digit: 'text-xl', padding: 'p-2' },
-                                        medium: { digit: 'text-3xl', padding: 'p-3' },
-                                        large: { digit: 'text-4xl', padding: 'p-4' },
-                                    };
-                                    const size = sizeClasses[localSettings.clockSize];
+                                    const previewMinutes = clamp(toInt(workStr, localSettings.workDuration), 0, 99);
                                     return (
-                                        <div className="text-center">
-                                            <div className="inline-flex items-center space-x-2">
-                                                <div
-                                                    className={`bg-background border-2 ${size.padding} rounded`}
-                                                    style={{ borderColor: 'hsl(var(--timer-foreground))' }}
-                                                >
-                                                    <div className={`${size.digit} font-bold tabular-nums text-[hsl(var(--timer-foreground))]`}>
-                                                        {previewMM}
-                                                    </div>
-                                                </div>
-                                                <div className={`${size.digit} font-bold tabular-nums text-[hsl(var(--timer-foreground))]`}>
-                                                    :
-                                                </div>
-                                                <div
-                                                    className={`bg-background border-2 ${size.padding} rounded`}
-                                                    style={{ borderColor: 'hsl(var(--timer-foreground))' }}
-                                                >
-                                                    <div className={`${size.digit} font-bold tabular-nums text-[hsl(var(--timer-foreground))]`}>
-                                                        {previewSS}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className="transform scale-[0.6] origin-center w-full flex justify-center">
+                                            <FlipClock 
+                                                formattedTime={previewTime}
+                                                timeLeft={previewMinutes * 60}
+                                                isRunning={false}
+                                                clockSize={localSettings.clockSize}
+                                            />
                                         </div>
                                     );
                                 })()}
