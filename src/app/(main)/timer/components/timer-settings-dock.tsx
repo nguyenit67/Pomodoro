@@ -22,7 +22,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 
 export const TimerSettingsDock = memo(function TimerSettingsDock() {
     const { t } = useTranslation();
-    const { isFocusMode, setFocusMode } = useSystemStore();
+    const { isFocusMode, setFocusMode, isTimerSettingsOpen, setTimerSettingsOpen } = useSystemStore();
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     // Store access
@@ -34,7 +34,6 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
     const hasActiveAudio = !!currentlyPlaying || activeAmbientWithVolume.length > 0;
 
     // Local Modal States
-    const [timerSettingsOpen, setTimerSettingsOpen] = useState(false);
     const [audioSettingsOpen, setAudioSettingsOpen] = useState(false);
     const [backgroundSettingsOpen, setBackgroundSettingsOpen] = useState(false);
 
@@ -60,12 +59,12 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
 
     return (
         <>
-            <div className="absolute bottom-0 left-0 z-10 flex gap-2 items-center ps-4">
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 flex gap-2 items-center">
                 <TooltipProvider>
                     {!isFocusMode && (
                         <>
                             {/* Music Button */}
-                            <Tooltip side="top">
+                            <Tooltip side="bottom">
                                 <TooltipTrigger asChild>
                                     <Button
                                         variant="ghost"
@@ -82,7 +81,6 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
                                                 : "bg-background/20 hover:bg-background/40 border-white/10 text-foreground"
                                         )}
                                         onClick={() => setAudioSettingsOpen(true)}
-                                        aria-label={t('timerComponents.enhancedTimer.soundSettings')}
                                     >
                                         {hasActiveAudio ? (
                                             <div className="flex items-center justify-center relative w-full h-full">
@@ -116,7 +114,6 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
                                                                 repeat: Infinity,
                                                                 ease: "easeInOut",
                                                             } : undefined}
-                                                            aria-hidden="true"
                                                         >
                                                             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                                                         </motion.svg>
@@ -164,26 +161,8 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
                                 </TooltipContent>
                             </Tooltip>
 
-                            {/* Background Button */}
-                            <Tooltip side="top">
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        aria-label={t('timerComponents.enhancedTimer.backgroundSettings')}
-                                        className="h-10 w-10 rounded-full bg-background/20 backdrop-blur-sm hover:bg-background/40 border border-white/10 text-foreground"
-                                        onClick={() => setBackgroundSettingsOpen(true)}
-                                    >
-                                        <Wallpaper className="h-5 w-5" aria-hidden="true" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>{t('timerComponents.enhancedTimer.backgroundSettings')}</p>
-                                </TooltipContent>
-                            </Tooltip>
-
                             {/* Settings Button */}
-                            <Tooltip side="top">
+                            <Tooltip side="bottom">
                                 <TooltipTrigger asChild>
                                     <Button
                                         variant="ghost"
@@ -199,11 +178,29 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
                                     <p>{t('timerComponents.enhancedTimer.timerSettings')}</p>
                                 </TooltipContent>
                             </Tooltip>
+
+                            {/* Background Button */}
+                            <Tooltip side="bottom">
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        aria-label={t('timerComponents.enhancedTimer.backgroundSettings')}
+                                        className="h-10 w-10 rounded-full bg-background/20 backdrop-blur-sm hover:bg-background/40 border border-white/10 text-foreground"
+                                        onClick={() => setBackgroundSettingsOpen(true)}
+                                    >
+                                        <Wallpaper className="h-5 w-5" aria-hidden="true" />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t('timerComponents.enhancedTimer.backgroundSettings')}</p>
+                                </TooltipContent>
+                            </Tooltip>
                         </>
                     )}
 
                     {/* Fullscreen Button */}
-                    <Tooltip side="top">
+                    <Tooltip side="bottom">
                         <TooltipTrigger asChild>
                             <Button
                                 variant="ghost"
@@ -226,7 +223,7 @@ export const TimerSettingsDock = memo(function TimerSettingsDock() {
                 </TooltipProvider>
 
                 <TimerSettingsModal
-                    isOpen={timerSettingsOpen}
+                    isOpen={isTimerSettingsOpen}
                     onClose={() => setTimerSettingsOpen(false)}
                 />
 

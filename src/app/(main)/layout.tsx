@@ -28,7 +28,7 @@ export default function MainLayout({
   const { isFocusMode, isChatPanelOpen, setChatPanelOpen } = useSystemStore();
   const { isAuthenticated } = useAuth();
   const pathname = usePathname();
-  const showChatToggle = pathname !== '/chat' && isAuthenticated;
+  const showChatToggle = false; // Hidden for UI rework
 
   return (
     <AppProviders>
@@ -70,11 +70,11 @@ export default function MainLayout({
                   <GATracker />
                 </Suspense>
               ) : null}
-              <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 lg:px-0">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden px-0">
                 {children}
               </div>
             </div>
-            <GlobalChat />
+            {/* GlobalChat hidden for UI rework */}
           </div>
         </SidebarInset>
       </SidebarProvider>

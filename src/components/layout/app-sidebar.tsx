@@ -182,7 +182,8 @@ export function AppSidebar() {
 
         <SidebarSeparator className="mx-3 bg-sidebar-border/50 dark:bg-sidebar-border" />
 
-        {/* Analytics & Progress */}
+        {/* Analytics & Progress (Hidden) */}
+        {/*
         <SidebarGroup className="py-3">
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
@@ -205,12 +206,14 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarSeparator className="mx-3 bg-sidebar-border/50 dark:bg-sidebar-border" />
+        */}
 
         {/* Tools & Entertainment */}
         <SidebarGroup className="py-3">
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
-              <SidebarMenuItem>
+              {/* Bro Chat item hidden for UI rework */}
+              {/* <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === '/chat'}
@@ -227,7 +230,7 @@ export function AppSidebar() {
                     <span suppressHydrationWarning>Bro Chat</span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
               <NavItem
                 href="/entertainment"
                 icon={

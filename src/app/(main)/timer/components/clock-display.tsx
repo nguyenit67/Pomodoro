@@ -44,6 +44,7 @@ export const ClockDisplay = memo(
                     <FlipClock
                         formattedTime={formattedTime}
                         timeLeft={timeLeft}
+                        isRunning={isRunning}
                         clockSize={clockSize}
                     />
                 );

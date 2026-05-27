@@ -262,8 +262,8 @@ export default function GuidePage() {
                         </CardContent>
                     </Card>
 
-                    {/* Chat AI Feature */}
-                    <Card className="hover:shadow-lg transition-shadow">
+                    {/* Chat AI Feature hidden for UI rework */}
+                    {/* <Card className="hover:shadow-lg transition-shadow">
                         <CardHeader>
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -291,7 +291,7 @@ export default function GuidePage() {
                                 {t('guide.howToUse.features.chatAI.cta')} <ArrowRight className="ml-1 h-4 w-4" />
                             </Link>
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     {/* Entertainment Feature */}
                     <Card className="hover:shadow-lg transition-shadow">

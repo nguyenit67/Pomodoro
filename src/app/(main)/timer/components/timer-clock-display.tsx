@@ -2,6 +2,8 @@
 
 import { memo, useMemo } from 'react';
 import { useTimerStore } from '@/stores/timer-store';
+import { useSystemStore } from '@/stores/system-store';
+import { useTranslation } from '@/contexts/i18n-context';
 import {
     AnalogClock,
     DigitalClock,
@@ -9,10 +11,12 @@ import {
 } from './clocks';
 
 export const TimerClockDisplay = memo(function TimerClockDisplay() {
+    const { t } = useTranslation();
     const timeLeft = useTimerStore((state) => state.timeLeft);
     const settings = useTimerStore((state) => state.settings);
     const mode = useTimerStore((state) => state.mode);
     const isRunning = useTimerStore((state) => state.isRunning);
+    const setTimerSettingsOpen = useSystemStore((state) => state.setTimerSettingsOpen);
 
     const totalTimeForMode = useMemo(() => {
         switch (mode) {
@@ -43,9 +47,10 @@ export const TimerClockDisplay = memo(function TimerClockDisplay() {
     const formattedTime = formatTime(timeLeft);
     const clockSize = settings.clockSize || 'medium';
 
+    let clockContent = null;
     switch (settings.clockType) {
         case 'analog':
-            return (
+            clockContent = (
                 <AnalogClock
                     formattedTime={formattedTime}
                     totalTimeForMode={totalTimeForMode}
@@ -54,8 +59,9 @@ export const TimerClockDisplay = memo(function TimerClockDisplay() {
                     isRunning={isRunning}
                 />
             );
+            break;
         case 'flip':
-            return (
+            clockContent = (
                 <FlipClock
                     formattedTime={formattedTime}
                     timeLeft={timeLeft}
@@ -63,11 +69,12 @@ export const TimerClockDisplay = memo(function TimerClockDisplay() {
                     clockSize={clockSize}
                 />
             );
+            break;
         case 'progress':
             // Progress clock type removed from UI; fallback to digital
         case 'digital':
         default:
-            return (
+            clockContent = (
                 <DigitalClock
                     formattedTime={formattedTime}
                     isRunning={isRunning}
@@ -76,5 +83,24 @@ export const TimerClockDisplay = memo(function TimerClockDisplay() {
                     clockSize={clockSize}
                 />
             );
+            break;
     }
+
+    return (
+        <div 
+            onClick={() => setTimerSettingsOpen(true)}
+            className="cursor-pointer inline-block transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setTimerSettingsOpen(true);
+                }
+            }}
+            title={t('timerComponents.enhancedTimer.timerSettings')}
+        >
+            {clockContent}
+        </div>
+    );
 });

@@ -79,6 +79,9 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@locator/babel-jsx": "^0.5.1",
+    "@locator/runtime": "^0.5.1",
+    "@locator/webpack-loader": "^0.5.1",
     "@tailwindcss/container-queries": "^0.1.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",

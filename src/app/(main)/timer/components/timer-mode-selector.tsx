@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslation } from '@/contexts/i18n-context';
 import { useTimerStore, TimerMode } from '@/stores/timer-store';
 import {
@@ -93,7 +93,7 @@ export const TimerModeSelector = memo(function TimerModeSelector() {
                     onValueChange={(val) => handleModeChange(val as TimerMode)}
                     className="w-fit"
                 >
-                    <TabsList className="bg-background/80 dark:bg-background/60 backdrop-blur-md border border-border/50 p-1 rounded-full shadow-sm">
+                    <TabsList className="bg-background/80 dark:bg-background/60 backdrop-blur-md border-border/50 rounded-full shadow-sm overflow-hidden">
                         <TabsTrigger
                             value="work"
                             className="rounded-full px-6 py-2 text-sm font-medium text-foreground/60 data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-md"
